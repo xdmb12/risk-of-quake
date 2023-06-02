@@ -25,7 +25,7 @@ public class WallRunning : MonoBehaviour
     private RaycastHit leftWallhit;
     private RaycastHit rightWallhit;
     private bool wallLeft;
-    public bool wallRight;
+    private bool wallRight;
 
     [Header("Exiting")] 
     private bool exitingWall;
@@ -41,7 +41,7 @@ public class WallRunning : MonoBehaviour
     private PlayerMovement pm;
     private Rigidbody rb;
     private CameraController _cameraController;
-    private bool startCameraPosition;
+    private float startCameraPosition;
 
 
 
@@ -124,6 +124,8 @@ public class WallRunning : MonoBehaviour
 
     private void StartWallRun()
     {
+        startCameraPosition = _cameraController.freeLookCamera.m_Offset.x;
+        
         pm.wallrunning = true;
         _cameraController.CameraShoulderSwitch(wallRight ? -_cameraController.rightHorizontalPosition : _cameraController.rightHorizontalPosition);
 
@@ -157,6 +159,7 @@ public class WallRunning : MonoBehaviour
     {
         pm.wallrunning = false;
         rb.useGravity = true;
+        _cameraController.freeLookCamera.m_Offset.x = startCameraPosition;
     }
 
     private void WallJump()

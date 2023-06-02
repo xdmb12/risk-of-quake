@@ -12,7 +12,7 @@ public class CameraController : MonoBehaviour
     private WallRunning _wallRunning;
 
     [Header("Camera")]
-    [SerializeField] private CinemachineCameraOffset freeLookCamera;
+    [SerializeField] public CinemachineCameraOffset freeLookCamera;
     [SerializeField] public float rightHorizontalPosition;
     private float cameraHorizontalPosition;
     public bool leftShoulder;
