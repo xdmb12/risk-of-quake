@@ -21,8 +21,6 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         _wallRunning = GetComponent<WallRunning>();
-        CameraShoulderSwitch(rightHorizontalPosition);
-        leftShoulder = true;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -38,13 +36,6 @@ public class CameraController : MonoBehaviour
         orientation.localRotation = localRotation;
 
         playerModel.localRotation = Quaternion.Lerp(playerModel.localRotation, localRotation, rotationSpeed);
-        
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            CameraShoulderSwitch(leftShoulder ? -rightHorizontalPosition : rightHorizontalPosition);
-
-            leftShoulder = !leftShoulder;
-        }
 
     }
     
