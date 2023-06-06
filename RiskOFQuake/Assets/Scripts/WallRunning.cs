@@ -9,13 +9,14 @@ public class WallRunning : MonoBehaviour
     [Header("Wallrunning")] 
     public LayerMask whatIsWall;
     public LayerMask whatIsGround;
+    
 
     public float wallRunForce;
     public float wallJumpUpForce;
     public float wallJumpSideForce;
     public float maxWallRunTime;
     private float wallRunTimer;
-    
+
     private float horizontalInput;
     private float verticalInput;
 
@@ -35,8 +36,8 @@ public class WallRunning : MonoBehaviour
     [Header("Gravity")] 
     public bool useGravity;
     public float gravityCounterForce;
-    
-    [Header("Camera")]
+
+    [Header("Camera")] 
     [SerializeField] private CinemachineCameraOffset freeLookCamera;
     [SerializeField] private float cameraHorizontalPosition;
 
@@ -45,6 +46,7 @@ public class WallRunning : MonoBehaviour
     private PlayerMovement pm;
     private Rigidbody rb;
     private float startCameraPosition;
+    private float wallCameraPosition;
 
 
 
@@ -62,16 +64,16 @@ public class WallRunning : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(pm.wallrunning)
+        if (pm.wallrunning)
             WallRunningMovement();
-        
+
     }
 
     private void CheckForWall()
     {
         wallRight = Physics.Raycast(transform.position + Vector3.up, orientation.right, out rightWallhit,
             wallCheckDistance, whatIsWall);
-        
+
         wallLeft = Physics.Raycast(transform.position + Vector3.up, -orientation.right, out leftWallhit,
             wallCheckDistance, whatIsWall);
     }
@@ -88,7 +90,7 @@ public class WallRunning : MonoBehaviour
 
         if ((wallRight || wallLeft) && verticalInput > 0 && AboveGround() && !exitingWall)
         {
-            if(!pm.wallrunning)
+            if (!pm.wallrunning)
                 StartWallRun();
 
             if (wallRunTimer > 0)
@@ -105,10 +107,10 @@ public class WallRunning : MonoBehaviour
                 WallJump();
             }
         }
-        
+
         else if (exitingWall)
         {
-            if(pm.wallrunning)
+            if (pm.wallrunning)
                 StopWallRun();
 
             if (exitWallTimer > 0)
@@ -119,7 +121,7 @@ public class WallRunning : MonoBehaviour
         }
         else
         {
-            if(pm.wallrunning)
+            if (pm.wallrunning)
                 StopWallRun();
         }
     }
@@ -127,15 +129,16 @@ public class WallRunning : MonoBehaviour
     private void StartWallRun()
     {
         startCameraPosition = freeLookCamera.m_Offset.x;
-        
+
         pm.wallrunning = true;
-        CameraShoulderSwitch(wallRight ? -cameraHorizontalPosition : cameraHorizontalPosition);
+
+        CameraShoulderSwitch(startCameraPosition, wallRight ? -cameraHorizontalPosition : cameraHorizontalPosition);
 
         wallRunTimer = maxWallRunTime;
-        
+
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
     }
-    
+
     private void WallRunningMovement()
     {
         rb.useGravity = false;
@@ -148,20 +151,23 @@ public class WallRunning : MonoBehaviour
         {
             wallForward = -wallForward;
         }
-        
+
         rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
-        
-        if(!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0))
+
+        if (!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0))
         {
             rb.AddForce(-wallNormal * 100, ForceMode.Force);
         }
     }
-    
+
     private void StopWallRun()
     {
+        wallCameraPosition = freeLookCamera.m_Offset.x;
+        
         pm.wallrunning = false;
         rb.useGravity = true;
-        freeLookCamera.m_Offset.x = startCameraPosition;
+
+        CameraShoulderSwitch(wallCameraPosition, startCameraPosition);
     }
 
     private void WallJump()
@@ -169,7 +175,7 @@ public class WallRunning : MonoBehaviour
         exitingWall = true;
         pm.doubleJump = true;
         exitWallTimer = exitWallTime;
-        
+
         Vector3 wallNormal = wallRight ? rightWallhit.normal : leftWallhit.normal;
 
         Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
@@ -177,9 +183,10 @@ public class WallRunning : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(forceToApply, ForceMode.Impulse);
     }
-    
-    void CameraShoulderSwitch(float position)
+
+    void CameraShoulderSwitch(float curPosition, float nextPosition)
     {
-        freeLookCamera.m_Offset.x = position;
+        float newCameraPosition = Mathf.Lerp(curPosition, nextPosition, 1f);
+        freeLookCamera.m_Offset.x = newCameraPosition;
     }
 }
