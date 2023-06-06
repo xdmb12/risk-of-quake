@@ -35,19 +35,21 @@ public class WallRunning : MonoBehaviour
     [Header("Gravity")] 
     public bool useGravity;
     public float gravityCounterForce;
+    
+    [Header("Camera")]
+    [SerializeField] private CinemachineCameraOffset freeLookCamera;
+    [SerializeField] private float cameraHorizontalPosition;
 
     [Header("References")] 
     public Transform orientation;
     private PlayerMovement pm;
     private Rigidbody rb;
-    private CameraController _cameraController;
     private float startCameraPosition;
 
 
 
     private void Start()
     {
-        _cameraController = GetComponent<CameraController>();
         rb = GetComponent<Rigidbody>();
         pm = GetComponent<PlayerMovement>();
     }
@@ -124,10 +126,10 @@ public class WallRunning : MonoBehaviour
 
     private void StartWallRun()
     {
-        startCameraPosition = _cameraController.freeLookCamera.m_Offset.x;
+        startCameraPosition = freeLookCamera.m_Offset.x;
         
         pm.wallrunning = true;
-        _cameraController.CameraShoulderSwitch(wallRight ? -_cameraController.rightHorizontalPosition : _cameraController.rightHorizontalPosition);
+        CameraShoulderSwitch(wallRight ? -cameraHorizontalPosition : cameraHorizontalPosition);
 
         wallRunTimer = maxWallRunTime;
         
@@ -159,7 +161,7 @@ public class WallRunning : MonoBehaviour
     {
         pm.wallrunning = false;
         rb.useGravity = true;
-        _cameraController.freeLookCamera.m_Offset.x = startCameraPosition;
+        freeLookCamera.m_Offset.x = startCameraPosition;
     }
 
     private void WallJump()
@@ -174,5 +176,10 @@ public class WallRunning : MonoBehaviour
 
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(forceToApply, ForceMode.Impulse);
+    }
+    
+    void CameraShoulderSwitch(float position)
+    {
+        freeLookCamera.m_Offset.x = position;
     }
 }

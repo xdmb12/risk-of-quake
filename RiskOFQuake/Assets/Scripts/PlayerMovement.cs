@@ -9,21 +9,19 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")] 
-    public float moveSpeed;
+    public float runningSpeed;
     public float groundDrag;
+    private float playerSpeed;
+
+    public float dashSpeed;
 
     [Header("Jump")]
     public float jumpForce;
     //public float jumpCooldown;
     //private bool readyToJump;
-    public bool doubleJump;
+    [HideInInspector] public bool doubleJump;
     public float airMultiplier;
-    
-    [Header("Dash")] 
-    public float dashForce;
-    public float dashCooldown;
-    private bool readyToDash;
-    
+
     [Header("Another stuff")]
     public Transform orientation;
 
@@ -43,24 +41,24 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 moveDirection;
 
     private Rigidbody rb;
-    // public float velocity;
-    // public bool isGround;
-    
-    public MovementState state;
-    public enum MovementState
+
+    private MovementState state;
+    private enum MovementState
     {
         walking,
         wallrunning,
+        dashing,
         air
     }
 
-    public bool wallrunning;
+    [HideInInspector] public bool dashing;
+    [HideInInspector] public bool wallrunning;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
-        ResetDash();
+        // ResetDash();
         // leftShoulder = false;
     }
 
@@ -72,7 +70,7 @@ public class PlayerMovement : MonoBehaviour
         SpeedControl();
         StateHandler();
 
-        if (grounded)
+        if (state == MovementState.walking || state == MovementState.wallrunning)
             rb.drag = groundDrag;
         else
         {
@@ -107,29 +105,26 @@ public class PlayerMovement : MonoBehaviour
                 Jump();
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.LeftShift) && readyToDash)
-        {
-            readyToDash = false;
-            
-            Dash();
-            
-            Invoke(nameof(ResetDash), dashCooldown);
-        }
     }
-    
+
     private void StateHandler()
     {
-        if (wallrunning)
+        if (dashing)
+        {
+            state = MovementState.dashing;
+            playerSpeed = dashSpeed;
+        }
+        
+        else if (wallrunning)
         {
             state = MovementState.wallrunning;
         }
         
-        if (grounded)
+        else if (grounded)
         {
             state = MovementState.walking;
+            playerSpeed = runningSpeed;
         }
-        
         else
         {
             state = MovementState.air;
@@ -142,11 +137,11 @@ public class PlayerMovement : MonoBehaviour
         
         if(grounded)
         {
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+            rb.AddForce(moveDirection.normalized * playerSpeed * 10f, ForceMode.Force);
         }
         else if (!grounded)
         {
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+            rb.AddForce(moveDirection.normalized * playerSpeed * 10f * airMultiplier, ForceMode.Force);
         }
     }
 
@@ -154,9 +149,9 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        if (flatVel.magnitude > moveSpeed)
+        if (flatVel.magnitude > playerSpeed)
         {
-            Vector3 limitedVel = flatVel.normalized * moveSpeed;
+            Vector3 limitedVel = flatVel.normalized * playerSpeed;
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
         }
     }
@@ -165,23 +160,6 @@ public class PlayerMovement : MonoBehaviour
     {
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
-    }
-
-    private void Dash()
-    {
-        rb.AddForce(orientation.forward * dashForce * 20f, ForceMode.Impulse);
-        rb.AddForce(transform.up * 2, ForceMode.Impulse);
-    }
-
-    // void ResetJump()
-    // {
-    //     readyToJump = true;
-    //     doubleJump = true;
-    // }
-
-    void ResetDash()
-    {
-        readyToDash = true;
     }
 
     private void OnDrawGizmos()

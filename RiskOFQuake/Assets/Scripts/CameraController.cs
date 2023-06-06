@@ -9,18 +9,14 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Transform mainCamera;
     [SerializeField] private Transform playerModel;
     [SerializeField] private Transform orientation;
-    private WallRunning _wallRunning;
 
     [Header("Camera")]
-    [SerializeField] public CinemachineCameraOffset freeLookCamera;
-    [SerializeField] public float rightHorizontalPosition;
     private float cameraHorizontalPosition;
     public bool leftShoulder;
 
     [SerializeField] private float rotationSpeed;
     void Start()
     {
-        _wallRunning = GetComponent<WallRunning>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -37,10 +33,5 @@ public class CameraController : MonoBehaviour
 
         playerModel.localRotation = Quaternion.Lerp(playerModel.localRotation, localRotation, rotationSpeed);
 
-    }
-    
-    public void CameraShoulderSwitch(float position)
-    {
-        freeLookCamera.m_Offset.x = position;
     }
 }
