@@ -13445,8 +13445,10 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
+  grounded: 0
   dashing: 0
   wallrunning: 0
+  culdownMoving: 0
 --- !u!54 &2114424670
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -13522,7 +13524,10 @@ MonoBehaviour:
   wallRunForce: 200
   wallJumpUpForce: 7
   wallJumpSideForce: 12
-  maxWallRunTime: 5
+  maxWallRunTime: 1
+  wallForwardTime: 1
+  maxWallForwardTime: 1
+  fromWallImpulse: 15
   wallCheckDistance: 0.7
   minJumpHeight: 1
   exitWallTime: 0.2
@@ -13531,6 +13536,7 @@ MonoBehaviour:
   freeLookCamera: {fileID: 582325795}
   cameraHorizontalPosition: 1
   orientation: {fileID: 620390402}
+  cameraSwitchSpeed: 0.1
 --- !u!114 &2114424674
 MonoBehaviour:
   m_ObjectHideFlags: 0

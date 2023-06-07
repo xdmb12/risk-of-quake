@@ -17,6 +17,10 @@ public class WallRunning : MonoBehaviour
     public float maxWallRunTime;
     private float wallRunTimer;
 
+    [SerializeField] private float wallForwardTime;
+    [SerializeField] private float maxWallForwardTime;
+    [SerializeField] private float fromWallImpulse;
+
     private float horizontalInput;
     private float verticalInput;
 
@@ -25,8 +29,10 @@ public class WallRunning : MonoBehaviour
     public float minJumpHeight;
     private RaycastHit leftWallhit;
     private RaycastHit rightWallhit;
+    private RaycastHit forwardWallhit;
     private bool wallLeft;
     private bool wallRight;
+    private bool wallForward;
 
     [Header("Exiting")] 
     private bool exitingWall;
@@ -48,7 +54,8 @@ public class WallRunning : MonoBehaviour
     private float startCameraPosition;
     private float wallCameraPosition;
 
-
+    private float cameraNextPosition;
+    [SerializeField] private float cameraSwitchSpeed;
 
     private void Start()
     {
@@ -67,6 +74,30 @@ public class WallRunning : MonoBehaviour
         if (pm.wallrunning)
             WallRunningMovement();
 
+
+        if (freeLookCamera.m_Offset.x != cameraNextPosition) 
+        {
+            freeLookCamera.m_Offset.x = Mathf.Lerp(freeLookCamera.m_Offset.x, cameraNextPosition, cameraSwitchSpeed);
+        }
+
+        if (forwardWallhit.collider) 
+        {
+            wallForwardTime -= Time.deltaTime;
+
+            if (wallForwardTime <= 0) 
+            {
+                pm.culdownMoving = true;
+            }
+        }
+        else 
+        {
+            pm.culdownMoving = false;
+        }
+
+        if (pm.grounded) 
+        {
+            wallForwardTime = maxWallForwardTime;
+        }
     }
 
     private void CheckForWall()
@@ -75,6 +106,9 @@ public class WallRunning : MonoBehaviour
             wallCheckDistance, whatIsWall);
 
         wallLeft = Physics.Raycast(transform.position + Vector3.up, -orientation.right, out leftWallhit,
+            wallCheckDistance, whatIsWall);
+
+        wallForward = Physics.Raycast(transform.position + Vector3.up, orientation.forward, out forwardWallhit,
             wallCheckDistance, whatIsWall);
     }
 
@@ -100,6 +134,14 @@ public class WallRunning : MonoBehaviour
             {
                 exitingWall = true;
                 exitWallTimer = exitWallTime;
+
+                if (wallLeft) 
+                {
+                    rb.AddForce(orientation.right * fromWallImpulse, ForceMode.Impulse);
+                } else if (wallRight) 
+                {
+                    rb.AddForce(-orientation.right * fromWallImpulse, ForceMode.Impulse);
+                }
             }
 
             if (Input.GetKeyDown(KeyCode.Space))
@@ -186,7 +228,6 @@ public class WallRunning : MonoBehaviour
 
     void CameraShoulderSwitch(float curPosition, float nextPosition)
     {
-        float newCameraPosition = Mathf.Lerp(curPosition, nextPosition, 1f);
-        freeLookCamera.m_Offset.x = newCameraPosition;
+        cameraNextPosition = nextPosition;
     }
 }

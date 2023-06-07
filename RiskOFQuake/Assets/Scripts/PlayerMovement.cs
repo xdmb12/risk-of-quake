@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Ground Check")] 
     // public float playerHeight;
     public LayerMask whatIsGround;
-    private bool grounded;
+    [HideInInspector] public bool grounded;
     
 
     private float horizontalInput;
@@ -53,6 +53,8 @@ public class PlayerMovement : MonoBehaviour
 
     [HideInInspector] public bool dashing;
     [HideInInspector] public bool wallrunning;
+
+    public bool culdownMoving;
 
     private void Start()
     {
@@ -84,7 +86,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        MovePlayer();
+        if(!culdownMoving)
+            MovePlayer();
     }
 
     private void MyInput()
