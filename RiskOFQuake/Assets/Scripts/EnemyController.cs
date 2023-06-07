@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour
     public float health;
     public float maxHealth;
     public Slider slider;
+    public PlayerMovement pm;
 
     private void Update()
     {
@@ -24,6 +25,7 @@ public class EnemyController : MonoBehaviour
         if (health == 0)
         {
             Destroy(gameObject);
+            pm.runningSpeed = pm.maxRunningSpeed;
         }
             
     }

@@ -10,13 +10,18 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")] 
     public float runningSpeed;
+    public float maxRunningSpeed;
     public float groundDrag;
     private float playerSpeed;
+    public float coefDecreaseSpeed;
 
     public float dashSpeed;
 
     [Header("Jump")]
     public float jumpForce;
+
+    public int availableDoubleJumps;
+    public int maxAvailableDoubleJumps;
     //public float jumpCooldown;
     //private bool readyToJump;
     [HideInInspector] public bool doubleJump;
@@ -54,14 +59,14 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector] public bool dashing;
     [HideInInspector] public bool wallrunning;
 
-    public bool culdownMoving;
+    public bool cooldownMoving;
+    public bool canMove;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
-        // ResetDash();
-        // leftShoulder = false;
+        canMove = true;
     }
 
     private void Update()
@@ -73,10 +78,22 @@ public class PlayerMovement : MonoBehaviour
         StateHandler();
 
         if (state == MovementState.walking || state == MovementState.wallrunning)
+        {
             rb.drag = groundDrag;
+        }
         else
         {
             rb.drag = 0;
+        }
+
+        if (grounded || wallrunning)
+        {
+            availableDoubleJumps = maxAvailableDoubleJumps;
+        }
+        
+        if(canMove)
+        {
+            runningSpeed -= Time.deltaTime * coefDecreaseSpeed;
         }
 
         groundedText.text = $"Ground is: {grounded}";
@@ -86,8 +103,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!culdownMoving)
+        if(!cooldownMoving && canMove)
             MovePlayer();
+
+        if (runningSpeed <= 0)
+        {
+            canMove = false;
+        }
     }
 
     private void MyInput()
@@ -95,16 +117,15 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && canMove)
         {
             if(grounded)
             {
-                doubleJump = true;
                 Jump();
             }
-            else if (doubleJump && !wallrunning)
+            else if (availableDoubleJumps >= 1)
             {
-                doubleJump = false;
+                availableDoubleJumps--;
                 Jump();
             }
         }
@@ -155,6 +176,7 @@ public class PlayerMovement : MonoBehaviour
         if (flatVel.magnitude > playerSpeed)
         {
             Vector3 limitedVel = flatVel.normalized * playerSpeed;
+            
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
         }
     }
@@ -162,9 +184,10 @@ public class PlayerMovement : MonoBehaviour
     private void Jump()
     {
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
-
+    
     private void OnDrawGizmos()
     {
         Gizmos.DrawRay(transform.position + Vector3.up * 0.1f, Vector3.down);

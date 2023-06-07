@@ -39,9 +39,9 @@ public class WallRunning : MonoBehaviour
     public float exitWallTime;
     private float exitWallTimer;
 
-    [Header("Gravity")] 
-    public bool useGravity;
-    public float gravityCounterForce;
+    // [Header("Gravity")] 
+    // public bool useGravity;
+    // public float gravityCounterForce;
 
     [Header("Camera")] 
     [SerializeField] private CinemachineCameraOffset freeLookCamera;
@@ -71,7 +71,7 @@ public class WallRunning : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (pm.wallrunning)
+        if (pm.wallrunning && pm.canMove)
             WallRunningMovement();
 
 
@@ -86,12 +86,12 @@ public class WallRunning : MonoBehaviour
 
             if (wallForwardTime <= 0) 
             {
-                pm.culdownMoving = true;
+                pm.cooldownMoving = true;
             }
         }
         else 
         {
-            pm.culdownMoving = false;
+            pm.cooldownMoving = false;
         }
 
         if (pm.grounded) 
@@ -174,7 +174,7 @@ public class WallRunning : MonoBehaviour
 
         pm.wallrunning = true;
 
-        CameraShoulderSwitch(startCameraPosition, wallRight ? -cameraHorizontalPosition : cameraHorizontalPosition);
+        CameraShoulderSwitch(wallRight ? -cameraHorizontalPosition : cameraHorizontalPosition);
 
         wallRunTimer = maxWallRunTime;
 
@@ -209,7 +209,7 @@ public class WallRunning : MonoBehaviour
         pm.wallrunning = false;
         rb.useGravity = true;
 
-        CameraShoulderSwitch(wallCameraPosition, startCameraPosition);
+        CameraShoulderSwitch(startCameraPosition);
     }
 
     private void WallJump()
@@ -226,7 +226,7 @@ public class WallRunning : MonoBehaviour
         rb.AddForce(forceToApply, ForceMode.Impulse);
     }
 
-    void CameraShoulderSwitch(float curPosition, float nextPosition)
+    void CameraShoulderSwitch(float nextPosition)
     {
         cameraNextPosition = nextPosition;
     }
