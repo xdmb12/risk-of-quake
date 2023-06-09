@@ -123,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 Jump();
             }
-            else if (availableDoubleJumps >= 1)
+            else if (availableDoubleJumps >= 1 && !wallrunning )
             {
                 availableDoubleJumps--;
                 Jump();
