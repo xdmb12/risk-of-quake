@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class Shooting : MonoBehaviour
@@ -10,11 +11,15 @@ public class Shooting : MonoBehaviour
     public int currentWeapon;
     public float maxDistance;
 
+    public float shootingSpeed;
+    public float maxShootingSpeed;
+
 
     [SerializeField] private Transform lookAt;
     public Camera mainCamera;
 
     public LayerMask targetLayer;
+    public GameObject tracer;
 
     private void Start()
     {
@@ -23,26 +28,35 @@ public class Shooting : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             if (weapon.bullets > 0)
             {
-                weapon.bullets--;
-                
-                
-                Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, maxDistance, targetLayer))
+                if(shootingSpeed >= maxShootingSpeed)
                 {
-                    Debug.Log(hit.collider.gameObject.name);
-                    if (hit.collider.GetComponent<EnemyDamage>())
+                    weapon.bullets--;
+                    shootingSpeed = 0;
+
+                    Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+                    RaycastHit hit;
+                    
+                    GameObject newTracer = Instantiate(tracer, weapon.transform.position, Quaternion.identity, null);
+                    newTracer.GetComponent<TracerScript>().target =  mainCamera.transform.GetChild(0).position;
+                    
+
+                    if (Physics.Raycast(ray, out hit, maxDistance, targetLayer))
                     {
-                        hit.collider.GetComponent<EnemyDamage>().Damage(weapon.damage);
+
+                        Debug.Log(hit.collider.gameObject.name);
+                        if (hit.collider.GetComponent<EnemyDamage>())
+                        {
+                            hit.collider.GetComponent<EnemyDamage>().Damage(weapon.damage);
+                        }
                     }
+
+                    if (weapon.bullets == 0)
+                        Reloading();
                 }
-                if(weapon.bullets == 0)
-                    Reloading();
             }
             else
             {
@@ -53,6 +67,14 @@ public class Shooting : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             Reloading();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (shootingSpeed < maxShootingSpeed)
+        {
+            shootingSpeed += Time.deltaTime * 10f;
         }
     }
 
