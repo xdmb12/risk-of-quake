@@ -11,15 +11,14 @@ public class Shooting : MonoBehaviour
     public int currentWeapon;
     public float maxDistance;
 
-    public float shootingSpeed;
-    public float maxShootingSpeed;
-
 
     [SerializeField] private Transform lookAt;
     public Camera mainCamera;
 
     public LayerMask targetLayer;
     public GameObject tracer;
+
+    public bool isReloading;
 
     private void Start()
     {
@@ -28,19 +27,19 @@ public class Shooting : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && !isReloading)
         {
             if (weapon.bullets > 0)
             {
-                if(shootingSpeed >= maxShootingSpeed)
+                if(weapon.shootingSpeed >= weapon.maxShootingSpeed)
                 {
                     weapon.bullets--;
-                    shootingSpeed = 0;
+                    weapon.shootingSpeed = 0;
 
                     Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
                     RaycastHit hit;
                     
-                    GameObject newTracer = Instantiate(tracer, weapon.transform.position, Quaternion.identity, null);
+                    GameObject newTracer = Instantiate(tracer, weapon.shootingPoint.position, Quaternion.identity, null);
                     newTracer.GetComponent<TracerScript>().target =  mainCamera.transform.GetChild(0).position;
                     
 
@@ -55,30 +54,46 @@ public class Shooting : MonoBehaviour
                     }
 
                     if (weapon.bullets == 0)
-                        Reloading();
+                        ReloadingStart();
                 }
             }
             else
             {
-                Reloading();
+                ReloadingStart();
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && !isReloading)
         {
-            Reloading();
+            ReloadingStart();
         }
     }
 
     private void FixedUpdate()
     {
-        if (shootingSpeed < maxShootingSpeed)
+        if (weapon.shootingSpeed < weapon.maxShootingSpeed)
         {
-            shootingSpeed += Time.deltaTime * 10f;
+            weapon.shootingSpeed += Time.deltaTime * 10f;
+        }
+
+        if (weapon.reloading < weapon.maxReloading)
+        {
+            weapon.reloading++;
+        }
+        else
+        {
+            if(isReloading) 
+                ReloadingFinish();
         }
     }
 
-    void Reloading()
+    void ReloadingStart()
+    {
+        weapon.reloading = 0;
+        isReloading = true;
+    }
+
+    void ReloadingFinish()
     {
         if (weapon.bullets >= 0 && weapon.bullets < weapon.bulletsMax)
         {
@@ -100,5 +115,7 @@ public class Shooting : MonoBehaviour
             weapon.bullets = weapon.bulletsAll;
             weapon.bulletsAll = 0;
         }
+
+        isReloading = false;
     }
 }
