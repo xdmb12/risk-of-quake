@@ -62,6 +62,8 @@ public class PlayerMovement : MonoBehaviour
     public bool cooldownMoving;
     public bool canMove;
 
+    public Animator animator;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -76,6 +78,7 @@ public class PlayerMovement : MonoBehaviour
         MyInput();
         SpeedControl();
         StateHandler();
+        Animations();
 
         if (state == MovementState.walking || state == MovementState.wallrunning)
         {
@@ -110,6 +113,22 @@ public class PlayerMovement : MonoBehaviour
         {
             canMove = false;
         }
+    }
+
+    private void Animations()
+    {
+        if (state == MovementState.walking) 
+        {
+            if (rb.velocity.magnitude > 0.3f) 
+            {
+                animator.SetInteger("State", 1);
+            }
+            else 
+            {
+                animator.SetInteger("State", 0);
+            }
+        }
+
     }
 
     private void MyInput()
