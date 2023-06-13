@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     public TMP_Text groundedText;
     public TMP_Text velocityText;
     public TMP_Text stateText;
+    public Animator animator;
     
     [Header("Ground Check")] 
     // public float playerHeight;
@@ -62,7 +63,6 @@ public class PlayerMovement : MonoBehaviour
     public bool cooldownMoving;
     public bool canMove;
 
-    public Animator animator;
 
     private void Start()
     {
@@ -119,7 +119,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (state == MovementState.walking) 
         {
-            if (rb.velocity.magnitude > 0.3f) 
+            if (rb.velocity.magnitude > 0.5f) 
             {
                 animator.SetInteger("State", 1);
             }

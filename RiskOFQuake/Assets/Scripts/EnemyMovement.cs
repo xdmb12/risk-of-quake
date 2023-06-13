@@ -7,11 +7,14 @@ using UnityEngine.AI;
 public class EnemyMovement : MonoBehaviour
 {
     private NavMeshAgent _navMeshAgent;
-
     public Transform[] points;
-    [HideInInspector] public Transform player;
+    public LayerMask whatIsPlayer;
     private Vector3 target;
+    [HideInInspector] public Transform player;
+
+    public float attackCooldown;
     public int currentPoint = 0;
+    private bool alreadyAttacked;
     
 
     void Start()
@@ -22,32 +25,71 @@ public class EnemyMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        var playerInAttackRange = Physics.CheckSphere(transform.position, 10f, whatIsPlayer);
+        
         if (player)
         {
-            target = player.position;
+            if (playerInAttackRange)
+            {
+                AttackPlayer();
+            }
+            else
+            {
+                ChasingPlayer();
+            }
         }
         else
         {
-            target = points[currentPoint].position;
-            
-            if (Vector3.Distance(transform.position, points[currentPoint].position) < 0.5f)
-            {
-                currentPoint++;
-            
-                if (currentPoint == points.Length)
-                {
-                    currentPoint = 0;
-                }
-            }
+            Patroling();
         }
     }
 
-    IEnumerator UpdateForTarget()
+    private void ChasingPlayer()
     {
-        yield return new WaitForSeconds(0.25f);
+        target = player.position;
+    }
+
+    private void Patroling()
+    {
+        target = points[currentPoint].position;
+
+        if (Vector3.Distance(transform.position, points[currentPoint].position) < 0.5f)
+        {
+            currentPoint++;
+
+            if (currentPoint == points.Length)
+            {
+                currentPoint = 0;
+            }
+        }
+    }
+    void AttackPlayer()
+    {
+        target = transform.position;
+        
+        transform.LookAt(player.position);
+        if(!alreadyAttacked)
+        {
+            //here must be attack
+            Debug.Log("Attack");
+            
+            alreadyAttacked = true;
+            Invoke(nameof(ResetAttack), attackCooldown);
+        }
+    }
+
+    private IEnumerator UpdateForTarget()
+    {
+        yield return new WaitForSeconds(0.15f);
         _navMeshAgent.SetDestination(target);
         StartCoroutine(UpdateForTarget());
     }
+
+    void ResetAttack()
+    {
+        alreadyAttacked = false;
+    }
+
     
     private void OnTriggerEnter(Collider other)
     {
