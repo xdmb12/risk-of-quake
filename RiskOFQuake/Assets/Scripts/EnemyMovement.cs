@@ -6,15 +6,28 @@ using UnityEngine.AI;
 
 public class EnemyMovement : MonoBehaviour
 {
-    private NavMeshAgent _navMeshAgent;
     public Transform[] points;
     public LayerMask whatIsPlayer;
+    public Transform player;
+    private NavMeshAgent _navMeshAgent;
     private Vector3 target;
-    [HideInInspector] public Transform player;
 
     public float attackCooldown;
     public int currentPoint = 0;
+    public float visionDistance;
     private bool alreadyAttacked;
+
+    private bool playerInAttackRange;
+    private bool playerInVisionRange;
+    
+    private EnemyState state;
+    
+    private enum EnemyState
+    {
+        Patrolling,
+        Chasing,
+        Attacking
+    }
     
 
     void Start()
@@ -25,35 +38,52 @@ public class EnemyMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        var playerInAttackRange = Physics.CheckSphere(transform.position, 10f, whatIsPlayer);
+        playerInAttackRange = Physics.CheckSphere(transform.position + Vector3.up, 10f, whatIsPlayer);
+        playerInVisionRange = Physics.CheckSphere(transform.position + Vector3.up, visionDistance, whatIsPlayer);
         
-        if (player)
+        if (playerInVisionRange)
         {
-            if (playerInAttackRange)
+            Vector3 directionToTarget = (player.transform.position + Vector3.up) - (transform.position + Vector3.up);
+            RaycastHit hit;
+            Ray ray = new Ray(transform.position + Vector3.up, directionToTarget);
+            
+            if(Physics.Raycast(ray, out hit, visionDistance))
             {
-                AttackPlayer();
+                Debug.Log(hit.collider.gameObject.name);
+                if(hit.collider.gameObject.CompareTag("Player"))
+                {
+                    if (playerInAttackRange)
+                    {
+                        AttackPlayer();
+                    }
+                    else
+                    {
+                        ChasingPlayer();
+                    }
+                }
             }
-            else
-            {
-                ChasingPlayer();
-            }
+            
         }
         else
         {
-            Patroling();
+            Patrolling();
         }
+        
+        Debug.Log($"State: {state}");
     }
 
     private void ChasingPlayer()
     {
         target = player.position;
+        state = EnemyState.Chasing;
     }
 
-    private void Patroling()
+    private void Patrolling()
     {
         target = points[currentPoint].position;
+        state = EnemyState.Patrolling;
 
-        if (Vector3.Distance(transform.position, points[currentPoint].position) < 0.5f)
+        if (Vector3.Distance(transform.position, points[currentPoint].position) < 1f)
         {
             currentPoint++;
 
@@ -66,6 +96,7 @@ public class EnemyMovement : MonoBehaviour
     void AttackPlayer()
     {
         target = transform.position;
+        state = EnemyState.Attacking;
         
         transform.LookAt(player.position);
         if(!alreadyAttacked)
@@ -90,36 +121,9 @@ public class EnemyMovement : MonoBehaviour
         alreadyAttacked = false;
     }
 
-    
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            Vector3 directionToTarget = (other.transform.position + Vector3.up) - (transform.position + Vector3.up);
-            RaycastHit hit;
-            Ray ray = new Ray(transform.position + Vector3.up, directionToTarget);
-            
-            if(Physics.Raycast(ray, out hit, 20f))
-            {
-                Debug.Log(hit.collider.gameObject.name);
-                if(hit.collider.gameObject.CompareTag("Player"))
-                {
-                    player = other.transform;
-                }
-            }
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            player = null;
-        }
-    }
-
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(transform.position + Vector3.up, target + Vector3.up);
+        Gizmos.DrawWireSphere(transform.position + Vector3.up, visionDistance);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Weapon : MonoBehaviour
 {
@@ -25,11 +26,14 @@ public class Weapon : MonoBehaviour
     [Header("Canvas")]
     public TMP_Text bulletsText;
     public TMP_Text bulletsAllText;
+    public Image reloadingSlide;
     
 
     private void Update()
     {
         bulletsText.text = $"{bullets}/{bulletsMax}";
         bulletsAllText.text = $"{bulletsAll}";
+
+        reloadingSlide.fillAmount = reloading / maxReloading;
     }
 }
