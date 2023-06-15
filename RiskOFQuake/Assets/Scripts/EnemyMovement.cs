@@ -3,18 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Quaternion = System.Numerics.Quaternion;
 
 public class EnemyMovement : MonoBehaviour
 {
     public Transform[] points;
     public LayerMask whatIsPlayer;
     public Transform player;
+    public GameObject fireball;
+    public Transform shootingPoint;
     private NavMeshAgent _navMeshAgent;
     private Vector3 target;
 
     public float attackCooldown;
     public int currentPoint = 0;
     public float visionDistance;
+    public float attackDistance;
     private bool alreadyAttacked;
 
     private bool playerInAttackRange;
@@ -38,7 +42,7 @@ public class EnemyMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        playerInAttackRange = Physics.CheckSphere(transform.position + Vector3.up, 10f, whatIsPlayer);
+        playerInAttackRange = Physics.CheckSphere(transform.position + Vector3.up, attackDistance, whatIsPlayer);
         playerInVisionRange = Physics.CheckSphere(transform.position + Vector3.up, visionDistance, whatIsPlayer);
         
         if (playerInVisionRange)
@@ -99,9 +103,11 @@ public class EnemyMovement : MonoBehaviour
         state = EnemyState.Attacking;
         
         transform.LookAt(player.position);
+        shootingPoint.LookAt(player.position);
+        
         if(!alreadyAttacked)
         {
-            //here must be attack
+            Instantiate(fireball, shootingPoint);
             Debug.Log("Attack");
             
             alreadyAttacked = true;
