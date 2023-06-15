@@ -29,7 +29,7 @@ public class CameraController : MonoBehaviour
         
         localRotation = Quaternion.Euler(x, mainCamera.localRotation.eulerAngles.y, z);
         orientation.localRotation = localRotation;
-
+        
         playerModel.localRotation = Quaternion.Lerp(playerModel.localRotation, localRotation, rotationSpeed);
 
     }

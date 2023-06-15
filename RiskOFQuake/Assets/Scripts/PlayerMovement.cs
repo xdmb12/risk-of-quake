@@ -99,9 +99,6 @@ public class PlayerMovement : MonoBehaviour
             runningSpeed -= Time.deltaTime * coefDecreaseSpeed;
         }
 
-        transform.rotation = orientation.rotation;
-        orientation.position = transform.position;
-        
         groundedText.text = $"Ground is: {grounded}";
         velocityText.text = $"{rb.velocity.magnitude}";
         stateText.text = $"{state}";

@@ -42,8 +42,7 @@ public class Shooting : MonoBehaviour
                     RaycastHit hit;
                     
                     newTracer = Instantiate(tracer, weapon.shootingPoint.position, Quaternion.identity, null);
-                    // GameObject newCibe = Instantiate(cibe, weapon.shootingPoint);
-                    // newCibe.transform.parent = null;
+                    newTracer.GetComponent<TracerScript>().target =  mainCamera.transform.GetChild(0).position;
                     
 
                     if (Physics.Raycast(ray, out hit, maxDistance, targetLayer))
