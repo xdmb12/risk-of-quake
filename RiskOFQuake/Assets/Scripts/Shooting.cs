@@ -17,6 +17,8 @@ public class Shooting : MonoBehaviour
 
     public LayerMask targetLayer;
     public GameObject tracer;
+    private GameObject newTracer;
+    public GameObject cibe;
 
     public bool isReloading;
 
@@ -39,8 +41,9 @@ public class Shooting : MonoBehaviour
                     Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
                     RaycastHit hit;
                     
-                    GameObject newTracer = Instantiate(tracer, weapon.shootingPoint.position, Quaternion.identity, null);
-                    newTracer.GetComponent<TracerScript>().target =  mainCamera.transform.GetChild(0).position;
+                    newTracer = Instantiate(tracer, weapon.shootingPoint.position, Quaternion.identity, null);
+                    // GameObject newCibe = Instantiate(cibe, weapon.shootingPoint);
+                    // newCibe.transform.parent = null;
                     
 
                     if (Physics.Raycast(ray, out hit, maxDistance, targetLayer))

@@ -20,7 +20,7 @@ public class TracerScript : MonoBehaviour
 
     void Tracer()
     {
-        transform.position = Vector3.MoveTowards(transform.position, target, speed);
+        transform.position += transform.forward * speed;
     }
 
     private void OnCollisionEnter(Collision other)

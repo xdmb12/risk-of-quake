@@ -99,6 +99,9 @@ public class PlayerMovement : MonoBehaviour
             runningSpeed -= Time.deltaTime * coefDecreaseSpeed;
         }
 
+        transform.rotation = orientation.rotation;
+        orientation.position = transform.position;
+        
         groundedText.text = $"Ground is: {grounded}";
         velocityText.text = $"{rb.velocity.magnitude}";
         stateText.text = $"{state}";
@@ -117,24 +120,20 @@ public class PlayerMovement : MonoBehaviour
 
     private void Animations()
     {
-        if (state == MovementState.walking) 
-        {
-            if (rb.velocity.magnitude > 0.5f) 
-            {
-                animator.SetInteger("State", 1);
-            }
-            else 
-            {
-                animator.SetInteger("State", 0);
-            }
-        }
+        // if (state == MovementState.walking) 
+        // {
+        //     animator.SetFloat("InputY", verticalInput);
+        //     animator.SetFloat("InputX", horizontalInput);
+        // }
+        animator.SetFloat("InputY", verticalInput);
+        animator.SetFloat("InputX", horizontalInput);
 
     }
 
     private void MyInput()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
+        horizontalInput = Input.GetAxis("Horizontal");
+        verticalInput = Input.GetAxis("Vertical");
 
         if (Input.GetKeyDown(KeyCode.Space) && canMove)
         {

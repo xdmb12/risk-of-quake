@@ -12,7 +12,6 @@ public class CameraController : MonoBehaviour
 
     [Header("Camera")]
     private float cameraHorizontalPosition;
-    public bool leftShoulder;
 
     [SerializeField] private float rotationSpeed;
     void Start()
