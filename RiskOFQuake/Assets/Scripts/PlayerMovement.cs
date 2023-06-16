@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -14,11 +14,13 @@ public class PlayerMovement : MonoBehaviour
     public float groundDrag;
     private float playerSpeed;
     public float coefDecreaseSpeed;
+    public float stopVelocity;
 
     public float dashSpeed;
 
     [Header("Jump")]
     public float jumpForce;
+    public float gravity;
 
     public int availableDoubleJumps;
     public int maxAvailableDoubleJumps;
@@ -172,15 +174,19 @@ public class PlayerMovement : MonoBehaviour
 
     private void MovePlayer()
     {
+        float currentY = moveDirection.y;
+
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-        
+
         if(grounded)
         {
-            rb.AddForce(moveDirection.normalized * playerSpeed * 10f, ForceMode.Force);
+            moveDirection.y = currentY;
+            rb.velocity = moveDirection * playerSpeed;
         }
         else if (!grounded)
         {
-            rb.AddForce(moveDirection.normalized * playerSpeed * 10f * airMultiplier, ForceMode.Force);
+            moveDirection.y = gravity;
+            rb.velocity = moveDirection * playerSpeed * airMultiplier;
         }
     }
 
