@@ -147,7 +147,7 @@ public class EnemyMovement : MonoBehaviour
         
         state = EnemyState.Attacking;
         
-        transform.LookAt(player.position);
+        transform.LookAt(player.position); 
 
         if(!alreadyAttacked)
         {

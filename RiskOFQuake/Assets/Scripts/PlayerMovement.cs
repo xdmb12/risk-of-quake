@@ -49,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 moveDirection;
 
     private Rigidbody rb;
+    private CharacterController controller;
 
     private MovementState state;
     private enum MovementState
@@ -68,6 +69,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        controller = GetComponent<CharacterController>();
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         canMove = true;
@@ -78,18 +80,18 @@ public class PlayerMovement : MonoBehaviour
         grounded = Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, 0.5f, whatIsGround);
 
         MyInput();
-        SpeedControl();
+        //SpeedControl();
         StateHandler();
         Animations();
 
-        if (state == MovementState.walking || state == MovementState.wallrunning)
-        {
-            rb.drag = groundDrag;
-        }
-        else
-        {
-            rb.drag = 0;
-        }
+        // if (state == MovementState.walking || state == MovementState.wallrunning)
+        // {
+        //     rb.drag = groundDrag;
+        // }
+        // else
+        // {
+        //     rb.drag = 0;
+        // }
 
         if (grounded || wallrunning)
         {
@@ -102,31 +104,25 @@ public class PlayerMovement : MonoBehaviour
         }
 
         groundedText.text = $"Ground is: {grounded}";
-        velocityText.text = $"{rb.velocity.magnitude}";
+        //velocityText.text = $"{rb.velocity.magnitude}";
         stateText.text = $"{state}";
     }
 
     private void FixedUpdate()
     {
-        if(!cooldownMoving && canMove)
+        if(!cooldownMoving)
             MovePlayer();
 
-        if (runningSpeed <= 0)
-        {
-            canMove = false;
-        }
+        // if (runningSpeed <= 0)
+        // {
+        //     canMove = false;
+        // }
     }
 
     private void Animations()
     {
-        // if (state == MovementState.walking) 
-        // {
-        //     animator.SetFloat("InputY", verticalInput);
-        //     animator.SetFloat("InputX", horizontalInput);
-        // }
         animator.SetFloat("InputY", verticalInput);
         animator.SetFloat("InputX", horizontalInput);
-
     }
 
     private void MyInput()
@@ -134,18 +130,18 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
 
-        if (Input.GetKeyDown(KeyCode.Space) && canMove)
-        {
-            if(grounded)
-            {
-                Jump();
-            }
-            else if (availableDoubleJumps >= 1 && !wallrunning )
-            {
-                availableDoubleJumps--;
-                Jump();
-            }
-        }
+        // if (Input.GetKeyDown(KeyCode.Space) && canMove)
+        // {
+        //     if(grounded)
+        //     {
+        //         Jump();
+        //     }
+        //     else if (availableDoubleJumps >= 1 && !wallrunning )
+        //     {
+        //         availableDoubleJumps--;
+        //         Jump();
+        //     }
+        // }
     }
 
     private void StateHandler()
@@ -180,27 +176,35 @@ public class PlayerMovement : MonoBehaviour
 
         if(grounded)
         {
-            moveDirection.y = currentY;
-            rb.velocity = moveDirection * playerSpeed;
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                moveDirection.y = jumpForce;
+            }
+            else
+            {
+                moveDirection.y = currentY;
+            }
         }
-        else if (!grounded)
+        else
         {
             moveDirection.y = gravity;
-            rb.velocity = moveDirection * playerSpeed * airMultiplier;
         }
+        
+
+        controller.Move(moveDirection * playerSpeed);
     }
 
-    void SpeedControl()
-    {
-        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
-        if (flatVel.magnitude > playerSpeed)
-        {
-            Vector3 limitedVel = flatVel.normalized * playerSpeed;
-            
-            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
-        }
-    }
+    // void SpeedControl()
+    // {
+    //     Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+    //
+    //     if (flatVel.magnitude > playerSpeed)
+    //     {
+    //         Vector3 limitedVel = flatVel.normalized * playerSpeed;
+    //         
+    //         rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+    //     }
+    // }
 
     private void Jump()
     {
