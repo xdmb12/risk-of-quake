@@ -2757,7 +2757,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
-  m_LocalRotation: {x: 0.027831132, y: 0.000000002407959, z: -6.704219e-11, w: 0.9996126}
+  m_LocalRotation: {x: 0.027831145, y: 3.439931e-10, z: -9.577433e-12, w: 0.9996126}
   m_LocalPosition: {x: 0, y: 0.7720618, z: -1.283905}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4381,7 +4381,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 582325791}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.04, y: 2.7069116, z: 62.004837}
+  m_LocalPosition: {x: 12.04, y: 2.7069116, z: 64.704834}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7344,7 +7344,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1088189432}
-  m_LocalRotation: {x: 0.014504093, y: 5.376429e-10, z: -7.798842e-12, w: 0.99989486}
+  m_LocalRotation: {x: 0.014504093, y: -5.376428e-10, z: 7.7988414e-12, w: 0.99989486}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -9705,12 +9705,16 @@ MonoBehaviour:
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 256
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 64
   player: {fileID: 2114424664}
   fireball: {fileID: 5179310456096947518, guid: f9762c1493c52654a80efdda74fc2c6d,
     type: 3}
   shootingPoint: {fileID: 332484968}
   attackCooldown: 5
   currentPoint: 0
+  walkPointRange: 10
   visionDistance: 50
   attackDistance: 25
 --- !u!195 &1539416028
@@ -12699,6 +12703,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2114424664}
+  - component: {fileID: 2114424675}
   - component: {fileID: 2114424666}
   - component: {fileID: 2114424667}
   - component: {fileID: 2114424669}
@@ -12706,7 +12711,6 @@ GameObject:
   - component: {fileID: 2114424672}
   - component: {fileID: 2114424673}
   - component: {fileID: 2114424674}
-  - component: {fileID: 2114424675}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -12722,7 +12726,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2114424663}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.04, y: 0.62, z: 65}
+  m_LocalPosition: {x: 12.04, y: 0.62, z: 67.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -12782,6 +12786,7 @@ MonoBehaviour:
   stopVelocity: 1
   dashSpeed: 25
   jumpForce: 8
+  gravity: 0
   availableDoubleJumps: 2
   maxAvailableDoubleJumps: 2
   doubleJump: 0

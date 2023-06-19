@@ -1,25 +1,31 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
-using Quaternion = System.Numerics.Quaternion;
+using Random = System.Random;
 
 public class EnemyMovement : MonoBehaviour
 {
     public Transform[] points;
     public LayerMask whatIsPlayer;
+    public LayerMask whatIsGround;
     public Transform player;
     public GameObject fireball;
     public Transform shootingPoint;
     private NavMeshAgent _navMeshAgent;
     private Vector3 target;
+    private Vector3 randomPointTarget;
+    private GameObject newFireball;
 
     public float attackCooldown;
     public int currentPoint = 0;
+    public int walkPointRange;
     public float visionDistance;
     public float attackDistance;
     private bool alreadyAttacked;
+    private bool walkPointSet;
 
     private bool playerInAttackRange;
     private bool playerInVisionRange;
@@ -79,35 +85,75 @@ public class EnemyMovement : MonoBehaviour
     private void ChasingPlayer()
     {
         target = player.position;
+        walkPointSet = true;
         state = EnemyState.Chasing;
     }
 
+    
     private void Patrolling()
     {
-        target = points[currentPoint].position;
         state = EnemyState.Patrolling;
 
-        if (Vector3.Distance(transform.position, points[currentPoint].position) < 1f)
+        if (points.Length > 1)
         {
-            currentPoint++;
+            target = points[currentPoint].position;
+            
+            Vector3 distanceToWalkPoint = transform.position - target;
 
-            if (currentPoint == points.Length)
+            if (distanceToWalkPoint.magnitude < 1f)
             {
-                currentPoint = 0;
+                currentPoint++;
+
+                if (currentPoint == points.Length)
+                {
+                    currentPoint = 0;
+                }
             }
+        }
+        else
+        {
+            if(!walkPointSet) 
+                SearchRandomPoint();
+
+            if (walkPointSet)
+                target = randomPointTarget;
+            
+
+            Vector3 distanceToWalkPoint = transform.position - target;
+
+            if (distanceToWalkPoint.magnitude < 1f)
+                walkPointSet = false;
+
+        }
+    }
+
+    void SearchRandomPoint()
+    {
+        Random rd = new Random();
+        int randomZ = rd.Next(-walkPointRange, walkPointRange);
+        int randomX = rd.Next(-walkPointRange, walkPointRange);
+        Debug.Log($"newPoint{randomZ} {randomZ}");
+
+        randomPointTarget = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+        
+        if (Physics.Raycast(randomPointTarget, -transform.up, 2f, whatIsGround))
+        {
+            walkPointSet = true;
         }
     }
     void AttackPlayer()
     {
         target = transform.position;
+        
         state = EnemyState.Attacking;
         
         transform.LookAt(player.position);
-        shootingPoint.LookAt(player.position);
-        
+
         if(!alreadyAttacked)
         {
-            Instantiate(fireball, shootingPoint);
+            newFireball = Instantiate(fireball, shootingPoint.position, Quaternion.identity, null);
+            newFireball.transform.LookAt(player.position + Vector3.up);
+            
             Debug.Log("Attack");
             
             alreadyAttacked = true;

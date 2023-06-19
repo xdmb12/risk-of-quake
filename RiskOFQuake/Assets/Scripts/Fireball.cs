@@ -6,18 +6,21 @@ using UnityEngine;
 public class Fireball : MonoBehaviour
 {
     public float speed;
-    public float verticalForce;
+    public Vector3 target;
     private Rigidbody rb;
-    void Start()
+
+
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    
     void FixedUpdate()
     {
-        rb.AddForce(transform.forward * speed, ForceMode.Impulse);
-        rb.AddForce(transform.up * verticalForce, ForceMode.Impulse);
+        
+        rb.velocity = transform.forward * speed;
+
+        Destroy(gameObject, 7f);
     }
 
     private void OnCollisionEnter(Collision other)
