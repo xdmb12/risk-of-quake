@@ -115,14 +115,41 @@ public class PlayerMovement : MonoBehaviour
 
     private void Animations()
     {
-        animator.SetFloat("InputY", verticalInput);
-        animator.SetFloat("InputX", horizontalInput);
+        var animHorizontalInput = Input.GetAxis("Horizontal");
+        var animVerticalInput = Input.GetAxis("Vertical");
+        
+        animator.SetFloat("InputY", animVerticalInput);
+        animator.SetFloat("InputX", animHorizontalInput);
     }
 
     private void MyInput()
     {
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
+        var speedBefore = playerSpeed;
+        
+        if(grounded)
+        {
+            if (horizontalInput == 0 && verticalInput == 0)
+            {
+                playerSpeed = 0;
+            }
+            else
+            {
+                playerSpeed = speedBefore;
+            }
+        }
+        // else
+        // {
+        //     if (horizontalInput == 0 && verticalInput == 0)
+        //     {
+        //         playerSpeed = Mathf.Lerp(speedBefore, 0f, 4f);
+        //     }
+        //     else
+        //     {
+        //         playerSpeed = speedBefore;
+        //     }
+        // }
 
         if (Input.GetKeyDown(KeyCode.Space) && canMove)
         {
