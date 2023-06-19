@@ -14,18 +14,14 @@ public class PlayerMovement : MonoBehaviour
     public float groundDrag;
     private float playerSpeed;
     public float coefDecreaseSpeed;
-    public float stopVelocity;
 
     public float dashSpeed;
 
     [Header("Jump")]
     public float jumpForce;
-    public float gravity;
 
     public int availableDoubleJumps;
     public int maxAvailableDoubleJumps;
-    //public float jumpCooldown;
-    //private bool readyToJump;
     [HideInInspector] public bool doubleJump;
     public float airMultiplier;
 
@@ -119,14 +115,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Animations()
     {
-        // if (state == MovementState.walking) 
-        // {
-        //     animator.SetFloat("InputY", verticalInput);
-        //     animator.SetFloat("InputX", horizontalInput);
-        // }
         animator.SetFloat("InputY", verticalInput);
         animator.SetFloat("InputX", horizontalInput);
-
     }
 
     private void MyInput()
@@ -174,19 +164,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void MovePlayer()
     {
-        float currentY = moveDirection.y;
 
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
         if(grounded)
         {
-            moveDirection.y = currentY;
-            rb.velocity = moveDirection * playerSpeed;
+            rb.AddForce(moveDirection.normalized * playerSpeed * 10f, ForceMode.Force);
         }
         else if (!grounded)
         {
-            moveDirection.y = gravity;
-            rb.velocity = moveDirection * playerSpeed * airMultiplier;
+            rb.AddForce(moveDirection.normalized * playerSpeed * 10f * airMultiplier, ForceMode.Force);
         }
     }
 
