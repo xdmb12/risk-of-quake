@@ -6,6 +6,7 @@ using UnityEngine;
 public class Fireball : MonoBehaviour
 {
     public float speed;
+    public float damage;
     public Vector3 target;
     private Rigidbody rb;
 

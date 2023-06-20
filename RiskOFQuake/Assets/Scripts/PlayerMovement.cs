@@ -77,6 +77,7 @@ public class PlayerMovement : MonoBehaviour
         SpeedControl();
         StateHandler();
         Animations();
+        FastStopOnGround();
 
         if (state == MovementState.walking || state == MovementState.wallrunning)
         {
@@ -126,30 +127,7 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-        var speedBefore = playerSpeed;
         
-        if(grounded)
-        {
-            if (horizontalInput == 0 && verticalInput == 0)
-            {
-                playerSpeed = 0;
-            }
-            else
-            {
-                playerSpeed = speedBefore;
-            }
-        }
-        // else
-        // {
-        //     if (horizontalInput == 0 && verticalInput == 0)
-        //     {
-        //         playerSpeed = Mathf.Lerp(speedBefore, 0f, 4f);
-        //     }
-        //     else
-        //     {
-        //         playerSpeed = speedBefore;
-        //     }
-        // }
 
         if (Input.GetKeyDown(KeyCode.Space) && canMove)
         {
@@ -162,6 +140,28 @@ public class PlayerMovement : MonoBehaviour
                 availableDoubleJumps--;
                 Jump();
             }
+        }
+    }
+
+    private void FastStopOnGround()
+    {
+        var speedBefore = playerSpeed;
+
+        if (horizontalInput == 0 && verticalInput == 0)
+        {
+            if (grounded)
+            {
+                playerSpeed = 0;
+            }
+            else
+            {
+                float inertiaSpeed = Mathf.Lerp(speedBefore, 0f, 4f * Time.deltaTime);
+                playerSpeed = Mathf.Max(playerSpeed, inertiaSpeed);
+            }
+        }
+        else
+        {
+            playerSpeed = speedBefore;
         }
     }
 
