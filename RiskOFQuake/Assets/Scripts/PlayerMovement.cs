@@ -155,7 +155,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                float inertiaSpeed = Mathf.Lerp(speedBefore, 0f, 4f * Time.deltaTime);
+                float inertiaSpeed = Mathf.Lerp(speedBefore, 0f, 5f * Time.deltaTime);
                 playerSpeed = Mathf.Max(playerSpeed, inertiaSpeed);
             }
         }
@@ -186,6 +186,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             state = MovementState.air;
+            playerSpeed = runningSpeed;
         }
     }
 
