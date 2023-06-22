@@ -18,7 +18,7 @@ public class Shooting : MonoBehaviour
     public LayerMask targetLayer;
     public GameObject tracer;
     private GameObject newTracer;
-    public GameObject cibe;
+    public Animator animator;
 
     public bool isReloading;
 
@@ -29,39 +29,57 @@ public class Shooting : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButton(0) && !isReloading)
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            if (weapon.bullets > 0)
+            WeaponRefresh(0);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            WeaponRefresh(1);
+        }
+        
+        if(Input.GetMouseButton(0))
+        {
+            if (!isReloading && weapon.type == Weapon.TypeOfWeapon.pistol)
             {
-                if(weapon.shootingSpeed >= weapon.maxShootingSpeed)
+                if (weapon.bullets > 0)
                 {
-                    weapon.bullets--;
-                    weapon.shootingSpeed = 0;
-
-                    Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-                    RaycastHit hit;
-                    
-                    newTracer = Instantiate(tracer, weapon.shootingPoint.position, Quaternion.identity, null);
-                    newTracer.GetComponent<TracerScript>().target =  mainCamera.transform.GetChild(0).position;
-                    
-
-                    if (Physics.Raycast(ray, out hit, maxDistance, targetLayer))
+                    if (weapon.shootingSpeed >= weapon.maxShootingSpeed)
                     {
+                        weapon.bullets--;
+                        weapon.shootingSpeed = 0;
 
-                        Debug.Log(hit.collider.gameObject.name);
-                        if (hit.collider.GetComponent<EnemyDamage>())
+                        Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+                        RaycastHit hit;
+
+                        newTracer = Instantiate(tracer, weapon.shootingPoint.position, Quaternion.identity, null);
+                        newTracer.GetComponent<TracerScript>().target = mainCamera.transform.GetChild(0).position;
+
+
+                        if (Physics.Raycast(ray, out hit, maxDistance, targetLayer))
                         {
-                            hit.collider.GetComponent<EnemyDamage>().Damage(weapon.damage);
-                        }
-                    }
 
-                    if (weapon.bullets == 0)
-                        ReloadingStart();
+                            Debug.Log(hit.collider.gameObject.name);
+                            if (hit.collider.GetComponent<EnemyDamage>())
+                            {
+                                hit.collider.GetComponent<EnemyDamage>().Damage(weapon.damage);
+                            }
+                        }
+
+                        if (weapon.bullets == 0)
+                            ReloadingStart();
+                    }
+                }
+                else
+                {
+                    ReloadingStart();
                 }
             }
-            else
+
+            if (weapon.type == Weapon.TypeOfWeapon.melee)
             {
-                ReloadingStart();
+                animator.CrossFade("Sword attack", 0.1f);
             }
         }
 
@@ -119,5 +137,17 @@ public class Shooting : MonoBehaviour
         }
 
         isReloading = false;
+    }
+
+    void WeaponRefresh(int newWeapon)
+    {
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            weapons[i].gameObject.SetActive(false);
+        }
+        
+        weapons[newWeapon].gameObject.SetActive(true);
+
+        weapon = weapons[newWeapon];
     }
 }

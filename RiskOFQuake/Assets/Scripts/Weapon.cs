@@ -27,6 +27,13 @@ public class Weapon : MonoBehaviour
     public TMP_Text bulletsText;
     public TMP_Text bulletsAllText;
     public Image reloadingSlide;
+
+    public enum TypeOfWeapon
+    {
+        pistol,
+        melee
+    }
+    public TypeOfWeapon type;
     
 
     private void Update()
