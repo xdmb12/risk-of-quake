@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Shooting : MonoBehaviour
 {
-    public Weapon[] weapons;
+    public GameObject[] weapons;
     private Weapon weapon;
     public int currentWeapon;
     public float maxDistance;
@@ -24,7 +24,7 @@ public class Shooting : MonoBehaviour
 
     private void Start()
     {
-        weapon = weapons[currentWeapon];
+        weapon = weapons[currentWeapon].gameObject.GetComponent<Weapon>();
     }
 
     private void Update()
@@ -41,7 +41,7 @@ public class Shooting : MonoBehaviour
         
         if(Input.GetMouseButton(0))
         {
-            if (!isReloading && weapon.type == Weapon.TypeOfWeapon.pistol)
+            if (!isReloading && weapons[currentWeapon].GetComponent<Weapon>())
             {
                 if (weapon.bullets > 0)
                 {
@@ -77,7 +77,7 @@ public class Shooting : MonoBehaviour
                 }
             }
 
-            if (weapon.type == Weapon.TypeOfWeapon.melee)
+            if (weapons[currentWeapon].GetComponent<MeleeWeapon>())
             {
                 animator.CrossFade("Sword attack", 0.1f);
             }
@@ -91,19 +91,22 @@ public class Shooting : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (weapon.shootingSpeed < weapon.maxShootingSpeed)
+        if(weapons[currentWeapon].GetComponent<Weapon>())
         {
-            weapon.shootingSpeed += Time.deltaTime * 10f;
-        }
+            if (weapon.shootingSpeed < weapon.maxShootingSpeed)
+            {
+                weapon.shootingSpeed += Time.deltaTime * 10f;
+            }
 
-        if (weapon.reloading < weapon.maxReloading)
-        {
-            weapon.reloading++;
-        }
-        else
-        {
-            if(isReloading) 
-                ReloadingFinish();
+            if (weapon.reloading < weapon.maxReloading)
+            {
+                weapon.reloading++;
+            }
+            else
+            {
+                if (isReloading)
+                    ReloadingFinish();
+            }
         }
     }
 
@@ -148,6 +151,13 @@ public class Shooting : MonoBehaviour
         
         weapons[newWeapon].gameObject.SetActive(true);
 
-        weapon = weapons[newWeapon];
+        if(weapons[currentWeapon].GetComponent<Weapon>()) 
+        {
+            weapon = weapons[newWeapon].gameObject.GetComponent<Weapon>();
+        }
+        else
+        {
+            weapon = null;
+        }
     }
 }

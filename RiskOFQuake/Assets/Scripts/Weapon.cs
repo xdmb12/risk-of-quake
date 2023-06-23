@@ -38,9 +38,12 @@ public class Weapon : MonoBehaviour
 
     private void Update()
     {
-        bulletsText.text = $"{bullets}/{bulletsMax}";
-        bulletsAllText.text = $"{bulletsAll}";
+        if(type == TypeOfWeapon.pistol)
+        {
+            bulletsText.text = $"{bullets}/{bulletsMax}";
+            bulletsAllText.text = $"{bulletsAll}";
 
-        reloadingSlide.fillAmount = reloading / maxReloading;
+            reloadingSlide.fillAmount = reloading / maxReloading;
+        }
     }
 }
