@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
-using Random = System.Random;
+using Random = UnityEngine.Random;
 
 public class EnemyMovement : MonoBehaviour
 {
@@ -129,9 +129,8 @@ public class EnemyMovement : MonoBehaviour
 
     void SearchRandomPoint()
     {
-        Random rd = new Random();
-        int randomZ = rd.Next(-walkPointRange, walkPointRange);
-        int randomX = rd.Next(-walkPointRange, walkPointRange);
+        int randomZ = Random.Range(-walkPointRange, walkPointRange);
+        int randomX = Random.Range(-walkPointRange, walkPointRange);
         Debug.Log($"newPoint{randomZ} {randomZ}");
 
         randomPointTarget = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);

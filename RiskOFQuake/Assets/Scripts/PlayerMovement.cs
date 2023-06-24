@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jump")]
     public float jumpForce;
+    private bool isFalling;
 
     public int availableDoubleJumps;
     public int maxAvailableDoubleJumps;
@@ -99,7 +100,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         groundedText.text = $"Ground is: {grounded}";
-        velocityText.text = $"{rb.velocity.magnitude}";
+        velocityText.text = $"{rb.velocity.y}";
         stateText.text = $"{state}";
     }
 
@@ -112,6 +113,8 @@ public class PlayerMovement : MonoBehaviour
         {
             canMove = false;
         }
+
+        isFalling = rb.velocity.y < 0;
     }
 
     private void Animations()
@@ -121,6 +124,8 @@ public class PlayerMovement : MonoBehaviour
         
         animator.SetFloat("InputY", animVerticalInput);
         animator.SetFloat("InputX", animHorizontalInput);
+        animator.SetBool("isGrounded", grounded);
+        animator.SetFloat("YPosition", rb.velocity.y);
     }
 
     private void MyInput()
