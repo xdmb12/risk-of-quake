@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jump")]
     public float jumpForce;
-    private bool isFalling;
+    private bool isJumping;
 
     public int availableDoubleJumps;
     public int maxAvailableDoubleJumps;
@@ -113,8 +113,7 @@ public class PlayerMovement : MonoBehaviour
         {
             canMove = false;
         }
-
-        isFalling = rb.velocity.y < 0;
+        
     }
 
     private void Animations()
@@ -126,6 +125,11 @@ public class PlayerMovement : MonoBehaviour
         animator.SetFloat("InputX", animHorizontalInput);
         animator.SetBool("isGrounded", grounded);
         animator.SetFloat("YPosition", rb.velocity.y);
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            animator.SetTrigger("Jump");
+        }
     }
 
     private void MyInput()
@@ -139,6 +143,7 @@ public class PlayerMovement : MonoBehaviour
             if(grounded)
             {
                 Jump();
+                isJumping = true;
             }
             else if (availableDoubleJumps >= 1 && !wallrunning )
             {
@@ -187,6 +192,7 @@ public class PlayerMovement : MonoBehaviour
         {
             state = MovementState.walking;
             playerSpeed = runningSpeed;
+            isJumping = false;
         }
         else
         {
