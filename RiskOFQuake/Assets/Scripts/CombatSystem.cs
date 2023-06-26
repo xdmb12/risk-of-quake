@@ -57,8 +57,9 @@ public class CombatSystem : MonoBehaviour
         {
             type = TypeOfWeapon.pistol;
             handsRigLayer.weight = 1;
-            weapons[1].SetActive(false);
+            weapons[2].SetActive(false);
             weapons[0].SetActive(true);
+            weapons[1].SetActive(true);
         }
         
         if (Input.GetKeyDown(swordKey))
@@ -66,7 +67,8 @@ public class CombatSystem : MonoBehaviour
             type = TypeOfWeapon.melee;
             handsRigLayer.weight = 0;
             weapons[0].SetActive(false);
-            weapons[1].SetActive(true);
+            weapons[1].SetActive(false);
+            weapons[2].SetActive(true);
         }
 
         if (Input.GetKeyDown(handsKey))
@@ -75,6 +77,7 @@ public class CombatSystem : MonoBehaviour
             handsRigLayer.weight = 0;
             weapons[0].SetActive(false);
             weapons[1].SetActive(false);
+            weapons[2].SetActive(false);
         }
         
     }
