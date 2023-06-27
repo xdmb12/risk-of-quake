@@ -3769,7 +3769,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 510726706}
-  m_LocalRotation: {x: -0.28978413, y: -0.00000001646809, z: -0.000000004986136, w: 0.95709205}
+  m_LocalRotation: {x: -0.28978413, y: 0.000000016468093, z: 0.0000000049861373, w: 0.95709205}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -10482,7 +10482,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 1
+  m_Weight: 0
   m_Data:
     m_Root: {fileID: 8014238408925187405}
     m_Mid: {fileID: 1205430599597979928}
@@ -13240,7 +13240,6 @@ GameObject:
   - component: {fileID: 2114424667}
   - component: {fileID: 2114424676}
   - component: {fileID: 2114424669}
-  - component: {fileID: 2114424671}
   - component: {fileID: 2114424673}
   - component: {fileID: 2114424674}
   - component: {fileID: 2114424677}
@@ -13333,31 +13332,6 @@ MonoBehaviour:
   wallrunning: 0
   cooldownMoving: 0
   canMove: 0
---- !u!114 &2114424671
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2114424663}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a171d63c212e3a040bafb90b4bfe0708, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weapons:
-  - {fileID: 4106256070266294885}
-  - {fileID: 702407184238832747}
-  currentWeapon: 0
-  maxDistance: 100
-  lookAt: {fileID: 73032031}
-  mainCamera: {fileID: 330585545}
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  tracer: {fileID: 19588301770100028, guid: 3ff215f37b1bdba4c8dfc0d7bdf16452, type: 3}
-  animator: {fileID: 4534773785596064489}
-  isReloading: 0
 --- !u!114 &2114424673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13450,11 +13424,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e167507e9e2254caf8a16b09b4adf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerAnim: {fileID: 4534773785596064489}
   weapons:
   - {fileID: 4106256070266294885}
   - {fileID: 1372581749}
   - {fileID: 702407184238832747}
+  maxDistance: 100
+  mainCamera: {fileID: 330585545}
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  tracer: {fileID: 19588301770100028, guid: 3ff215f37b1bdba4c8dfc0d7bdf16452, type: 3}
+  playerAnim: {fileID: 4534773785596064489}
   handsRigLayer: {fileID: 376032131}
   pistolKey: 49
   swordKey: 50
@@ -14674,7 +14654,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4106256070266294885}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e5175c4fad36b2249b7d5ac59c03dbf2, type: 3}
   m_Name: 

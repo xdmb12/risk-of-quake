@@ -41,7 +41,7 @@ public class Shooting : MonoBehaviour
         
         if(Input.GetMouseButton(0))
         {
-            if (!isReloading && weapons[currentWeapon].GetComponent<Weapon>())
+            if (!isReloading)
             {
                 if (weapon.bullets > 0)
                 {
@@ -75,11 +75,6 @@ public class Shooting : MonoBehaviour
                 {
                     ReloadingStart();
                 }
-            }
-
-            if (weapons[currentWeapon].GetComponent<MeleeWeapon>())
-            {
-                animator.CrossFade("Sword attack", 0.1f);
             }
         }
 

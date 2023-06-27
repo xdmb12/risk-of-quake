@@ -6,25 +6,39 @@ using UnityEngine.Animations.Rigging;
 
 public class CombatSystem : MonoBehaviour
 {
-    public Animator playerAnim;
-    public GameObject[] weapons;
-    public Rig handsRigLayer;
+    [SerializeField] private GameObject[] weapons;
+    
+    [Header("Shooting Weapon")]
+    [SerializeField] private float maxDistance;
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private LayerMask targetLayer;
+    [SerializeField] private GameObject tracer;
+    private Weapon shootingWeapon;
+    private GameObject newTracer;
+    private bool isReloading;
+    
 
-    public KeyCode pistolKey = KeyCode.Alpha1;
-    public KeyCode swordKey = KeyCode.Alpha2;
-    public KeyCode handsKey = KeyCode.Alpha3;
+    [Header("Anims")]
+    [SerializeField] private Animator playerAnim;
+    [SerializeField] private Rig handsRigLayer;
+    
+    [Header("Input")]
+    [SerializeField] private KeyCode pistolKey = KeyCode.Alpha1;
+    [SerializeField] private KeyCode swordKey = KeyCode.Alpha2;
+    [SerializeField] private KeyCode handsKey = KeyCode.Alpha3;
     
     public TypeOfWeapon type;
     public enum TypeOfWeapon
     {
-        pistol,
-        melee,
-        hands
+        Pistol,
+        Melee,
+        Hands
     }
 
     private void Start()
     {
-        type = TypeOfWeapon.hands;
+        type = TypeOfWeapon.Hands;
+        shootingWeapon = weapons[0].gameObject.GetComponent<Weapon>();
     }
 
 
@@ -32,53 +46,161 @@ public class CombatSystem : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            if(type == TypeOfWeapon.melee)
+            if(type == TypeOfWeapon.Melee)
             {
-                playerAnim.SetTrigger("MeleeAttack");
+                MeleeWeapon();
             }
             
-            if(type == TypeOfWeapon.pistol)
+            if(type == TypeOfWeapon.Pistol)
             {
                 Debug.Log("Pew");
+                ShootingWeapon();
             }
 
-            if (type == TypeOfWeapon.hands)
+            if (type == TypeOfWeapon.Hands)
             {
                 Debug.Log("Invalid");
             }
         }
         
+        if (Input.GetKeyDown(KeyCode.R) && !isReloading && type == TypeOfWeapon.Pistol)
+        {
+            ReloadingStartForShootingWeapon();
+        }
+        
         WeaponChanger();
+    }
+
+    private void FixedUpdate()
+    {
+        if(type == TypeOfWeapon.Pistol)
+        {
+            RateOfFireForShootingWeapon();
+        }
     }
 
     void WeaponChanger()
     {
         if(Input.GetKeyDown(pistolKey))
         {
-            type = TypeOfWeapon.pistol;
+            type = TypeOfWeapon.Pistol;
             handsRigLayer.weight = 1;
             weapons[2].SetActive(false);
             weapons[0].SetActive(true);
-            weapons[1].SetActive(true);
+            //weapons[1].SetActive(true);
         }
         
         if (Input.GetKeyDown(swordKey))
         {
-            type = TypeOfWeapon.melee;
+            type = TypeOfWeapon.Melee;
             handsRigLayer.weight = 0;
             weapons[0].SetActive(false);
-            weapons[1].SetActive(false);
+            //weapons[1].SetActive(false);
             weapons[2].SetActive(true);
         }
 
         if (Input.GetKeyDown(handsKey))
         {
-            type = TypeOfWeapon.hands;
+            type = TypeOfWeapon.Hands;
             handsRigLayer.weight = 0;
             weapons[0].SetActive(false);
-            weapons[1].SetActive(false);
+            //weapons[1].SetActive(false);
             weapons[2].SetActive(false);
         }
         
+    }
+
+    void MeleeWeapon()
+    {
+        playerAnim.SetTrigger("MeleeAttack");
+    }
+
+    void ShootingWeapon()
+    {
+        if (!isReloading)
+        {
+            if (shootingWeapon.bullets > 0)
+            {
+                if (shootingWeapon.shootingSpeed >= shootingWeapon.maxShootingSpeed)
+                {
+                    shootingWeapon.bullets--;
+                    shootingWeapon.shootingSpeed = 0;
+
+                    Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+                    RaycastHit hit;
+
+                    newTracer = Instantiate(tracer, shootingWeapon.shootingPoint.position, Quaternion.identity, null);
+                    newTracer.GetComponent<TracerScript>().target = mainCamera.transform.GetChild(0).position;
+
+
+                    if (Physics.Raycast(ray, out hit, maxDistance, targetLayer))
+                    {
+
+                        Debug.Log(hit.collider.gameObject.name);
+                        if (hit.collider.GetComponent<EnemyDamage>())
+                        {
+                            hit.collider.GetComponent<EnemyDamage>().Damage(shootingWeapon.damage);
+                        }
+                    }
+
+                    if (shootingWeapon.bullets == 0)
+                        ReloadingStartForShootingWeapon();
+                }
+            }
+            else
+            {
+                ReloadingStartForShootingWeapon();
+            }
+        }
+    }
+
+    void RateOfFireForShootingWeapon()
+    {
+        if (shootingWeapon.shootingSpeed < shootingWeapon.maxShootingSpeed)
+        {
+            shootingWeapon.shootingSpeed += Time.deltaTime * 10f;
+        }
+
+        if (shootingWeapon.reloading < shootingWeapon.maxReloading)
+        {
+            shootingWeapon.reloading++;
+        }
+        else
+        {
+            if (isReloading)
+                ReloadingFinishForShootingWeapon();
+        }
+    }
+    
+    void ReloadingStartForShootingWeapon()
+    {
+        shootingWeapon.reloading = 0;
+        isReloading = true;
+    }
+    
+    void ReloadingFinishForShootingWeapon()
+    {
+        if (shootingWeapon.bullets >= 0 && shootingWeapon.bullets < shootingWeapon.bulletsMax)
+        {
+            float remainingBullets = shootingWeapon.bulletsMax - shootingWeapon.bullets;
+        
+            if (shootingWeapon.bulletsAll >= remainingBullets)
+            {
+                shootingWeapon.bulletsAll -= remainingBullets;
+                shootingWeapon.bullets = shootingWeapon.bulletsMax;
+            }
+            else
+            {
+                shootingWeapon.bullets += shootingWeapon.bulletsAll;
+                shootingWeapon.bulletsAll = 0;
+            }
+        }
+        else if (shootingWeapon.bulletsAll <= shootingWeapon.bulletsMax)
+        {
+            shootingWeapon.bullets = shootingWeapon.bulletsAll;
+            shootingWeapon.bulletsAll = 0;
+        }
+
+        isReloading = false;
     }
 }
