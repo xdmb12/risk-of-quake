@@ -9,7 +9,13 @@ public class EnemyController : MonoBehaviour
     public float health;
     public float maxHealth;
     public Slider slider;
-    public PlayerMovement pm;
+    private PlayerMovement pm;
+
+    private void Start()
+    {
+        GameObject playerObject = GameObject.Find("Player");
+        pm = playerObject.GetComponent<PlayerMovement>();
+    }
 
     private void Update()
     {

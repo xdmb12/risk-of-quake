@@ -12,6 +12,11 @@ public class Spawner : MonoBehaviour
 
     public float timer;
     public float timerMax;
+    public int enemyCount;
+    public int maxEnemyCount;
+
+    private bool canSpawn;
+    
 
     private void Start()
     {

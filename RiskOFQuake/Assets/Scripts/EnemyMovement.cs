@@ -11,7 +11,7 @@ public class EnemyMovement : MonoBehaviour
     public Transform[] points;
     public LayerMask whatIsPlayer;
     public LayerMask whatIsGround;
-    public Transform player;
+    private Transform player;
     public GameObject fireball;
     public Transform shootingPoint;
     private NavMeshAgent _navMeshAgent;
@@ -43,6 +43,8 @@ public class EnemyMovement : MonoBehaviour
     void Start()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
+        GameObject playerObject = GameObject.Find("Player");
+        player = playerObject.GetComponent<Transform>();
         StartCoroutine(UpdateForTarget());
     }
 

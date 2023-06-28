@@ -5,7 +5,13 @@ using UnityEngine;
 
 public class HealthbarCanvasController : MonoBehaviour
 {
-    public GameObject player;
+    private GameObject player;
+
+    private void Start()
+    {
+        GameObject playerObject = GameObject.Find("Player");
+        player = playerObject;
+    }
 
     private void Update()
     {
