@@ -12050,7 +12050,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1899090517}
-  m_LocalRotation: {x: 0.28978413, y: 0.000000007566408, z: -0.0000000022909243, w: 0.95709205}
+  m_LocalRotation: {x: 0.2897841, y: -0.00000004998031, z: 0.000000015132818, w: 0.95709205}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -13108,7 +13108,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1935139865
 Transform:
   m_ObjectHideFlags: 0
@@ -13887,6 +13887,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   tracer: {fileID: 19588301770100028, guid: 3ff215f37b1bdba4c8dfc0d7bdf16452, type: 3}
+  meleeWeapon: {fileID: 702407184238832752}
   playerAnim: {fileID: 4534773785596064489}
   handsRigLayer: {fileID: 376032131}
   pistolKey: 49
@@ -14155,6 +14156,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 20
+  meleeAttackCooldown: 12
+  maxMeleeAttackCooldown: 12
 --- !u!1 &734757105083763709
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,6 +16,10 @@ public class CombatSystem : MonoBehaviour
     private Weapon shootingWeapon;
     private GameObject newTracer;
     private bool isReloading;
+
+    [Header("Melee Weapon")] 
+    public MeleeWeapon meleeWeapon;
+    
     
 
     [Header("Anims")]
@@ -39,6 +43,7 @@ public class CombatSystem : MonoBehaviour
     {
         type = TypeOfWeapon.Hands;
         shootingWeapon = weapons[0].gameObject.GetComponent<Weapon>();
+        meleeWeapon.maxMeleeAttackCooldown = meleeWeapon.meleeAttackCooldown;
     }
 
 
@@ -77,6 +82,12 @@ public class CombatSystem : MonoBehaviour
         {
             RateOfFireForShootingWeapon();
         }
+        
+        if(type == TypeOfWeapon.Melee)
+        {
+            MeleeWeaponAttackRate();
+        }
+        
     }
 
     void WeaponChanger()
@@ -112,7 +123,19 @@ public class CombatSystem : MonoBehaviour
 
     void MeleeWeapon()
     {
-        playerAnim.SetTrigger("MeleeAttack");
+        if(meleeWeapon.meleeAttackCooldown >= meleeWeapon.maxMeleeAttackCooldown)
+        {
+            meleeWeapon.meleeAttackCooldown = 0;
+            playerAnim.SetTrigger("MeleeAttack");
+        }
+    }
+
+    void MeleeWeaponAttackRate()
+    {
+        if (meleeWeapon.meleeAttackCooldown < meleeWeapon.maxMeleeAttackCooldown)
+        {
+            meleeWeapon.meleeAttackCooldown += Time.deltaTime * 10f;
+        }
     }
 
     void ShootingWeapon()
