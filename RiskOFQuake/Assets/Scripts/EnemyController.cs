@@ -9,12 +9,14 @@ public class EnemyController : MonoBehaviour
     public float health;
     public float maxHealth;
     public Slider slider;
-    private PlayerMovement pm;
+    [HideInInspector] public PlayerMovement pm;
+    private Spawner spawner;
 
-    private void Start()
+    private void Awake()
     {
-        GameObject playerObject = GameObject.Find("Player");
-        pm = playerObject.GetComponent<PlayerMovement>();
+        GameManager gameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
+        pm = gameManager.player.GetComponent<PlayerMovement>();
+        spawner = gameManager.spawner;
     }
 
     private void Update()
@@ -30,9 +32,10 @@ public class EnemyController : MonoBehaviour
 
         if (health == 0)
         {
-            Destroy(gameObject);
             pm.runningSpeed = pm.maxRunningSpeed;
+            Destroy(gameObject);
+
+            spawner.CheckEnemys();
         }
-            
     }
 }

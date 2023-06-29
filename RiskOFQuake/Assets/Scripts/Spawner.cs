@@ -10,32 +10,64 @@ public class Spawner : MonoBehaviour
 
     public GameObject enemyPrefab;
 
-    public float timer;
-    public float timerMax;
-    public int enemyCount;
-    public int maxEnemyCount;
+    public int currentWave;
 
-    private bool canSpawn;
-    
+    public SpawnWave[] waves;
+
+    private Transform enemyContainer;
 
     private void Start()
     {
+        enemyContainer = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>().enemyContainer;
+
         for (int i = 0; i < transform.childCount; i++) 
         {
             spawnZones.Add(transform.GetChild(i).GetComponent<SpawnZone>());
         }
+
+        Spawn();
     }
 
-    private void FixedUpdate()
+    private void Spawn()
     {
-        if (timer >= timerMax) 
+        for (int i = 0; i < waves[currentWave].prefabs.Length; i++) 
         {
-            timer = 0;
-            Instantiate(enemyPrefab, spawnZones[currentZone].FindSpawnPosition(), Quaternion.identity, null);
+            Instantiate(waves[currentWave].prefabs[i], spawnZones[currentZone].FindSpawnPosition(), Quaternion.identity, enemyContainer);
         }
-        else 
+
+        //if (timer >= timerMax) 
+        //{
+        //    timer = 0;
+        //    Instantiate(enemyPrefab, spawnZones[currentZone].FindSpawnPosition(), Quaternion.identity, null);
+        //}
+        //else 
+        //{
+        //    timer++;
+        //}
+    }
+
+    public void NextWave() 
+    {
+        if (currentWave + 1 == waves.Length)
+            return;
+
+        currentZone++;
+
+        if (currentZone + 1 == spawnZones.Count) 
         {
-            timer++;
+            currentZone = 0;
+        }
+
+        currentWave++;
+
+        Spawn();
+    }
+
+    public void CheckEnemys()
+    {
+        if (enemyContainer.childCount == 1) 
+        {
+            NextWave();
         }
     }
 }

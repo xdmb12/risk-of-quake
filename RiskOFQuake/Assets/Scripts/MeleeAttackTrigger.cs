@@ -5,11 +5,32 @@ using UnityEngine;
 
 public class MeleeAttackTrigger : MonoBehaviour
 {
+    private MeleeWeapon meleeWeapon;
+
+    private EnemyDamage damaged;
+
+    private void Start()
+    {
+        meleeWeapon = GetComponent<MeleeWeapon>();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.GetComponent<EnemyDamage>())
         {
-            other.gameObject.GetComponent<EnemyDamage>().Damage(20);
+            if (!damaged) 
+            {
+                other.gameObject.GetComponent<EnemyDamage>().Damage(meleeWeapon.damage);
+                StartCoroutine(DeleteDamaged());
+            }
+
+            damaged = other.gameObject.GetComponent<EnemyDamage>();
         }
+    }
+
+    IEnumerator DeleteDamaged() 
+    {
+        yield return new WaitForSeconds(0.7f);
+        damaged = null;
     }
 }

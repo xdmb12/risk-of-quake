@@ -31,7 +31,9 @@ public class EnemyMovement : MonoBehaviour
     private bool playerInVisionRange;
     
     private EnemyState state;
-    
+
+    private EnemyController enemyController;
+
     private enum EnemyState
     {
         Patrolling,
@@ -43,8 +45,8 @@ public class EnemyMovement : MonoBehaviour
     void Start()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
-        GameObject playerObject = GameObject.Find("Player");
-        player = playerObject.GetComponent<Transform>();
+        enemyController = GetComponent<EnemyController>();
+        player = enemyController.pm.transform;
         StartCoroutine(UpdateForTarget());
     }
 
