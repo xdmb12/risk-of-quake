@@ -6,4 +6,5 @@ using UnityEngine;
 public class SpawnWave : ScriptableObject
 {
     public GameObject[] prefabs;
+    public Vector3[] spawnPoint;
 }

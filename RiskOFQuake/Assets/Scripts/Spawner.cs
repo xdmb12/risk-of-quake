@@ -8,8 +8,6 @@ public class Spawner : MonoBehaviour
 
     private List<SpawnZone> spawnZones = new List<SpawnZone>();
 
-    public GameObject enemyPrefab;
-
     public int currentWave;
 
     public SpawnWave[] waves;
