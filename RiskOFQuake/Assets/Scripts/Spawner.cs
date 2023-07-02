@@ -30,7 +30,15 @@ public class Spawner : MonoBehaviour
     {
         for (int i = 0; i < waves[currentWave].prefabs.Length; i++) 
         {
-            Instantiate(waves[currentWave].prefabs[i], spawnZones[currentZone].FindSpawnPosition(), Quaternion.identity, enemyContainer);
+            if(waves[currentWave].spawnPoint.Length != 0)
+            {
+                Instantiate(waves[currentWave].prefabs[i], waves[currentWave].spawnPoint[i], Quaternion.identity, enemyContainer);
+            }
+            else
+            {
+                Instantiate(waves[currentWave].prefabs[i], spawnZones[currentZone].FindSpawnPosition(),
+                    Quaternion.identity, enemyContainer);
+            }
         }
 
         //if (timer >= timerMax) 

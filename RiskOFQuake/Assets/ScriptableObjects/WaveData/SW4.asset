@@ -18,3 +18,4 @@ MonoBehaviour:
   - {fileID: 6557335477241280575, guid: 324901b14fbbc0a47aa95c1481436275, type: 3}
   - {fileID: 6557335477241280575, guid: 324901b14fbbc0a47aa95c1481436275, type: 3}
   - {fileID: 6557335477241280575, guid: 324901b14fbbc0a47aa95c1481436275, type: 3}
+  spawnPoint: []

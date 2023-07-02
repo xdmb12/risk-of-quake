@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+ using Random = UnityEngine.Random;
 
-public class CombatSystem : MonoBehaviour
+ public class CombatSystem : MonoBehaviour
 {
     [SerializeField] private GameObject[] weapons;
     
@@ -13,6 +14,8 @@ public class CombatSystem : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private LayerMask targetLayer;
     [SerializeField] private GameObject tracer;
+    [SerializeField] private float weaponSpreadX;
+    [SerializeField] private float weaponSpreadY;
     private Weapon shootingWeapon;
     private GameObject newTracer;
     private bool isReloading;
@@ -175,6 +178,16 @@ public class CombatSystem : MonoBehaviour
                 ReloadingStartForShootingWeapon();
             }
         }
+    }
+
+    Vector3 WeaponShootingSpread()
+    {
+        float x = Random.Range(-weaponSpreadX, weaponSpreadX);
+        float y = Random.Range(-weaponSpreadY, weaponSpreadY);
+
+        Vector3 weaponSpread = new Vector3(x, y, transform.position.z);
+
+        return weaponSpread;
     }
 
     void RateOfFireForShootingWeapon()
