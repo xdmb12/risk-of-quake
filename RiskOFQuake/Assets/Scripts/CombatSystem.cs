@@ -151,6 +151,7 @@ using UnityEngine.Animations.Rigging;
                 {
                     shootingWeapon.bullets--;
                     shootingWeapon.shootingSpeed = 0;
+                    shootingWeapon.particle.Play();
 
                     Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
                     RaycastHit hit;
