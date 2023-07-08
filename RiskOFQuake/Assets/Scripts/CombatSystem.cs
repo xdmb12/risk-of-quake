@@ -99,6 +99,7 @@ using UnityEngine.Animations.Rigging;
         {
             type = TypeOfWeapon.Pistol;
             handsRigLayer.weight = 1;
+            playerAnim.SetLayerWeight(1, 1);
             weapons[2].SetActive(false);
             weapons[0].SetActive(true);
             //weapons[1].SetActive(true);
@@ -108,6 +109,7 @@ using UnityEngine.Animations.Rigging;
         {
             type = TypeOfWeapon.Melee;
             handsRigLayer.weight = 0;
+            playerAnim.SetLayerWeight(1, 0);
             weapons[0].SetActive(false);
             //weapons[1].SetActive(false);
             weapons[2].SetActive(true);
@@ -117,6 +119,7 @@ using UnityEngine.Animations.Rigging;
         {
             type = TypeOfWeapon.Hands;
             handsRigLayer.weight = 0;
+            playerAnim.SetLayerWeight(1, 0);
             weapons[0].SetActive(false);
             //weapons[1].SetActive(false);
             weapons[2].SetActive(false);
@@ -186,7 +189,7 @@ using UnityEngine.Animations.Rigging;
         float x = Random.Range(-weaponSpreadX, weaponSpreadX);
         float y = Random.Range(-weaponSpreadY, weaponSpreadY);
 
-        Vector3 weaponSpread = new Vector3(x, y, transform.position.z);
+        Vector3 weaponSpread = new Vector3(x, y, mainCamera.transform.GetChild(0).position.z);
 
         return weaponSpread;
     }
