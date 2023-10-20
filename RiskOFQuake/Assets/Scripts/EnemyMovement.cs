@@ -169,7 +169,7 @@ public class EnemyMovement : MonoBehaviour
         yield return new WaitForSeconds(0.15f);
         _navMeshAgent.SetDestination(target);
         StartCoroutine(UpdateForTarget());
-    }
+    } 
 
     void ResetAttack()
     {

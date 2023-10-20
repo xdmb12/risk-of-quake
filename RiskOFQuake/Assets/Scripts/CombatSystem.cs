@@ -184,16 +184,6 @@ using UnityEngine.Animations.Rigging;
         }
     }
 
-    Vector3 WeaponShootingSpread()
-    {
-        float x = Random.Range(-weaponSpreadX, weaponSpreadX);
-        float y = Random.Range(-weaponSpreadY, weaponSpreadY);
-
-        Vector3 weaponSpread = new Vector3(x, y, mainCamera.transform.GetChild(0).position.z);
-
-        return weaponSpread;
-    }
-
     void RateOfFireForShootingWeapon()
     {
         if (shootingWeapon.shootingSpeed < shootingWeapon.maxShootingSpeed)
